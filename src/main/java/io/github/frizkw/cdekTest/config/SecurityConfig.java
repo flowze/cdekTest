@@ -27,7 +27,8 @@ public class SecurityConfig {
                 .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Сессии не нужны
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/**").permitAll() // Доступ к логину открыт
-                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll() // Swagger открыт
+                        .requestMatchers("/v3/api-docs/**", "/swagger-ui/**").permitAll()
+                        .requestMatchers("/error").permitAll()// Swagger открыт
                         .anyRequest().authenticated() // Всё остальное под замком
                 )
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

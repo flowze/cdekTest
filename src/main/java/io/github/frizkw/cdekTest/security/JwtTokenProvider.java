@@ -1,23 +1,28 @@
 package io.github.frizkw.cdekTest.security;
 
 
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
-import java.security.Key;
 import java.util.Date;
 
 @Component
+@Slf4j
 public class JwtTokenProvider {
 
     @Value("${jwt.secret}")
     private String secretString;
+
+    @Value("${jwt.expiration}")
+    private long expiration;
 
     private SecretKey key;
 
@@ -32,7 +37,7 @@ public class JwtTokenProvider {
         return Jwts.builder()
                 .subject(username) // Лаконичные названия методов без "set"
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 86400000))
+                .expiration(new Date(System.currentTimeMillis() + expiration))
                 .signWith(key) // Здесь синтаксис почти не изменился
                 .compact();
     }
@@ -45,8 +50,8 @@ public class JwtTokenProvider {
                     .build()
                     .parseSignedClaims(token); // Вместо parseClaimsJws
             return true;
-        } catch (Exception e) {
-            // Здесь можно логировать конкретные ошибки (просрочен, неверная подпись и т.д.)
+        } catch (JwtException e) {
+            log.warn("Invalid JWT: {}", e.getMessage());
             return false;
         }
     }
@@ -58,5 +63,13 @@ public class JwtTokenProvider {
                 .parseSignedClaims(token)
                 .getPayload() // Вместо getBody()
                 .getSubject();
+    }
+
+    public Claims parseClaims(String token) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
     }
 }

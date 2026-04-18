@@ -1,6 +1,6 @@
 --liquibase formatted sql
 --changeset nikolay:2
-CREATE TABLE time_records (
+CREATE TABLE IF NOT EXISTS time_records (
     id BIGSERIAL PRIMARY KEY,
     employee_id BIGINT NOT NULL,
     task_id BIGINT NOT NULL,
