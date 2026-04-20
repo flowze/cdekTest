@@ -28,27 +28,25 @@ public class JwtTokenProvider {
 
     @PostConstruct
     public void init() {
-        // Декодируем строку из Base64 и создаем ключ для HMAC-SHA
         byte[] keyBytes = Decoders.BASE64.decode(secretString);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     public String createToken(String username) {
         return Jwts.builder()
-                .subject(username) // Лаконичные названия методов без "set"
+                .subject(username)
                 .issuedAt(new Date())
                 .expiration(new Date(System.currentTimeMillis() + expiration))
-                .signWith(key) // Здесь синтаксис почти не изменился
+                .signWith(key)
                 .compact();
     }
 
     public boolean validateToken(String token) {
         try {
-            // Теперь используем Jwts.parser() напрямую, без Builder
             Jwts.parser()
-                    .verifyWith(key) // Вместо setSigningKey
+                    .verifyWith(key)
                     .build()
-                    .parseSignedClaims(token); // Вместо parseClaimsJws
+                    .parseSignedClaims(token);
             return true;
         } catch (JwtException e) {
             log.warn("Invalid JWT: {}", e.getMessage());
@@ -61,7 +59,7 @@ public class JwtTokenProvider {
                 .verifyWith(key)
                 .build()
                 .parseSignedClaims(token)
-                .getPayload() // Вместо getBody()
+                .getPayload()
                 .getSubject();
     }
 

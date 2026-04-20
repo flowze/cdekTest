@@ -29,7 +29,6 @@ public class SecurityUser implements UserDetails {
         return List.of(new SimpleGrantedAuthority(user.getRole().getAuthority()));
     }
 
-    // Дополнительный метод, чтобы удобно доставать ID или всю сущность в контроллерах
     public Long getId() {
         return user.getId();
     }

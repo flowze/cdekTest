@@ -23,17 +23,10 @@ public class TimeRecordServiceImpl implements TimeRecordService {
     @Override
     @Transactional
     public void saveTimeRecord(CreateTimeRecordRequest request) {
-        // 1. Проверяем, существует ли задача, к которой привязывается время
         if (!taskMapper.existsById(request.taskId())) {
             throw new ResourceNotFoundException("Задача с ID " + request.taskId() + " не найдена");
         }
 
-        // 2. Валидация временного отрезка
-        if (request.endTime().isBefore(request.startTime())) {
-            throw new IllegalArgumentException("Время окончания не может быть раньше времени начала");
-        }
-
-        // 3. Создаем сущность через Builder
         TimeRecord entity = TimeRecord.builder()
                 .employeeId(request.employeeId())
                 .taskId(request.taskId())
@@ -42,17 +35,14 @@ public class TimeRecordServiceImpl implements TimeRecordService {
                 .workDescription(request.workDescription())
                 .build();
 
-        // 4. Сохраняем в базу
         timeRecordMapper.insert(entity);
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<TimeRecordResponse> getRecordsByPeriod(Long employeeId, LocalDateTime start, LocalDateTime end) {
-        // Получаем список из MyBatis
         List<TimeRecord> records = timeRecordMapper.findByEmployeeIdAndPeriod(employeeId, start, end);
 
-        // Преобразуем список сущностей в список DTO
         return records.stream()
                 .map(this::mapToResponse)
                 .toList();

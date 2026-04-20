@@ -8,35 +8,34 @@ import io.github.frizkw.cdekTest.model.Task;
 import io.github.frizkw.cdekTest.model.TaskStatus;
 import io.github.frizkw.cdekTest.service.TaskService;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class TaskServiceImpl implements TaskService {
 
     private final TaskMapper taskMapper;
 
     @Override
-    @Transactional // Перекрываем для методов, изменяющих данные
+    @Transactional
     public TaskResponse createTask(CreateTaskRequest request) {
-        // 1. Создаем Entity из DTO
         Task task = Task.builder()
                 .title(request.title())
                 .description(request.description())
-                .status(TaskStatus.NEW) // Начальный статус по умолчанию
+                .status(TaskStatus.NEW)
                 .build();
 
-        // 2. Сохраняем в БД через MyBatis
-        // После выполнения insert, MyBatis запишет сгенерированный ID в объект task
         taskMapper.insert(task);
-
-        // 3. Возвращаем Response DTO
+        log.info("Задача создана успешно: id={}, title={}", task.getId(), task.getTitle());
         return mapToResponse(task);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public TaskResponse getTaskById(Long id) {
         return taskMapper.findById(id)
                 .map(this::mapToResponse)
@@ -46,13 +45,11 @@ public class TaskServiceImpl implements TaskService {
     @Override
     @Transactional
     public void updateStatus(Long id, TaskStatus status) {
-        // Сначала проверяем, существует ли задача
-        if (!taskMapper.existsById(id)) {
-            throw new ResourceNotFoundException("Невозможно обновить статус: задача с ID " + id + " не найдена");
-        }
+        int updatedRows = taskMapper.updateStatus(id, status);
 
-        // Обновляем статус
-        taskMapper.updateStatus(id, status);
+        if (updatedRows == 0) {
+            throw new ResourceNotFoundException("Задача с ID " + id + " не найдена");
+        }
     }
 
     private TaskResponse mapToResponse(Task task) {

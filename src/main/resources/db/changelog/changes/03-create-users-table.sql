@@ -8,5 +8,5 @@ CREATE TABLE IF NOT EXISTS  users (
 );
 
 INSERT INTO users (username, password, role)
-VALUES ('admin', '$2a$10$8.UnVuG9HHgffUDAlk8qfOuMYyJDdXT9MNoIP5Z6vGU6.S6Mq6I4.', 'ADMIN');
+VALUES ('admin', '$2a$12$RnEfvS4lf6P8Jczvvq6rF.YWQ0JxBjvKDAm1m0DofOGNBiJWmDCma', 'ADMIN');
 --rollback DROP TABLE users;

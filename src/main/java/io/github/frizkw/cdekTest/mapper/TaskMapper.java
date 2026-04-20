@@ -16,7 +16,7 @@ public interface TaskMapper {
     Optional<Task> findById(Long id);
 
     @Update("UPDATE tasks SET status = #{status} WHERE id = #{id}")
-    void updateStatus(@Param("id") Long id, @Param("status") TaskStatus status);
+    int updateStatus(@Param("id") Long id, @Param("status") TaskStatus status);
 
     @Select("SELECT COUNT(1) > 0 FROM tasks WHERE id = #{id}")
     boolean existsById(Long id);

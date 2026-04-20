@@ -3,6 +3,7 @@ package io.github.frizkw.cdekTest.mapper;
 import io.github.frizkw.cdekTest.model.User;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 
 import java.util.Optional;
@@ -13,5 +14,9 @@ public interface UserMapper {
     Optional<User> findByUsername(String username);
 
     @Insert("INSERT INTO users(username, password, role) VALUES(#{username}, #{password}, #{role})")
+    @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(User user);
+
+    @Select("SELECT EXISTS(SELECT 1 FROM users WHERE username = #{username})")
+    boolean existsByUsername(String username);
 }

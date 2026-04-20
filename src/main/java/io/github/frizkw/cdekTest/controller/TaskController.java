@@ -24,7 +24,6 @@ public class TaskController {
     @PostMapping
     @Operation(summary = "Создать новую задачу")
     public ResponseEntity<TaskResponse> createTask(@Valid @RequestBody CreateTaskRequest request) {
-        // Сервис принимает запрос, создает задачу и возвращает DTO для ответа
         TaskResponse response = taskService.createTask(request);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }

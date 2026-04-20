@@ -11,6 +11,6 @@ public class User {
 
     private Long id;
     private String username;
-    private String password; // Хэш пароля (BCrypt)
-    private Role role;       // Роль (USER, ADMIN)
+    private String password;
+    private Role role;
 }

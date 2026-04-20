@@ -7,7 +7,14 @@ CREATE TABLE IF NOT EXISTS time_records (
     start_time TIMESTAMP NOT NULL,
     end_time TIMESTAMP NOT NULL,
     work_description TEXT,
+
+    -- Внешний ключ на таблицу сотрудников/пользователей
+    CONSTRAINT fk_employee FOREIGN KEY (employee_id) REFERENCES users (id) ON DELETE CASCADE,
+
+    -- Твой существующий ключ на задачи
     CONSTRAINT fk_task FOREIGN KEY (task_id) REFERENCES tasks (id) ON DELETE CASCADE,
+
+    -- Твоя проверка времени
     CONSTRAINT check_time_order CHECK (end_time > start_time)
 );
 

@@ -13,12 +13,16 @@ public interface TimeRecordMapper {
     @Options(useGeneratedKeys = true, keyProperty = "id")
     void insert(TimeRecord timeRecord);
 
-    @Select("SELECT id, employee_id as employeeId, task_id as taskId, start_time as startTime, " +
-            "end_time as endTime, work_description as workDescription " +
-            "FROM time_records WHERE employee_id = #{employeeId} " +
-            "AND start_time >= #{startDate} AND end_time <= #{endDate}")
+    @Select("""
+        SELECT *
+        FROM time_records
+        WHERE employee_id = #{employeeId}
+          AND start_time < #{endDate}
+          AND end_time > #{startDate}
+    """)
     List<TimeRecord> findByEmployeeIdAndPeriod(
-            @Param("employeeId") Long employeeId,
-            @Param("startDate") LocalDateTime startDate,
-            @Param("endDate") LocalDateTime endDate);
+            Long employeeId,
+            LocalDateTime startDate,
+            LocalDateTime endDate
+    );
 }
