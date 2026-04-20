@@ -37,7 +37,7 @@ mvn clean package
 Убедитесь, что у вас установлен Docker и запущен Docker Desktop, затем выполните:
 
 ```bash
-docker-compose --env-file .env up -d --build
+docker compose -f docker/docker-compose.yml --env-file docker/.env up -d --build
 ```
 
 ## 📝 Проверка API
