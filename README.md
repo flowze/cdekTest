@@ -27,7 +27,7 @@
 Приложение внутри Docker ожидает JAR-файл с конкретным именем. Выполните сборку:
 
 ```bash
-./mvnw clean package -DskipTests
+mvn clean package
 ```
 
 Убедитесь, что в `target/` появился файл `cdekTest-0.0.1-SNAPSHOT.jar`.
